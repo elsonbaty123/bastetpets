@@ -1,6 +1,9 @@
 import { SignUpForm } from '@/components/auth/SignUpForm'
 import Link from 'next/link'
 
+// Force dynamic rendering to avoid static generation issues with Supabase
+export const dynamic = 'force-dynamic'
+
 export default function SignUpPage() {
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-50 py-8">
