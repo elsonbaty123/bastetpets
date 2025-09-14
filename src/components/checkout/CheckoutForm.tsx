@@ -8,38 +8,19 @@ import { Label } from '@/components/ui/label'
 import { Textarea } from '@/components/ui/textarea'
 import { Package, Calculator, MapPin, Cat, Clock } from 'lucide-react'
 import { createClient } from '@/lib/supabase/client'
+import type { Database } from '@/types/database'
 
-interface CatWithNutrition {
-  id: string
-  name: string
-  age_months: number
-  weight_kg: number
-  activity_level: string
-  allergies: string[]
-  nutrition: {
-    daily_calories: number
-    daily_grams: number
-  }
-}
+type Plan = Database['public']['Tables']['plans']['Row']
+type Profile = Database['public']['Tables']['profiles']['Row']
+type Cat = Database['public']['Tables']['cats']['Row']
 
 interface CheckoutFormProps {
-  plan: {
-    id: string
-    name: string
-    price: number
-    currency: string
-  }
-  cats: CatWithNutrition[]
-  profile: {
-    name: string
-    city: string
-    address: string
-    phone: string
-  }
-  onSuccess: (orderId: string) => void
+  plan: Plan
+  cats: Cat[]
+  profile: Profile
 }
 
-export default function CheckoutForm({ plan, cats, profile, onSuccess }: CheckoutFormProps) {
+export default function CheckoutForm({ plan, cats, profile }: CheckoutFormProps) {
   const [notes, setNotes] = useState('')
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
@@ -103,8 +84,9 @@ export default function CheckoutForm({ plan, cats, profile, onSuccess }: Checkou
       // Redirect to success page
       router.push(`/orders/${order.id}/success`)
       
-    } catch (err: any) {
-      setError(err.message || 'حدث خطأ غير متوقع')
+    } catch (err: unknown) {
+      const errorMessage = err instanceof Error ? err.message : 'حدث خطأ غير متوقع'
+      setError(errorMessage)
     } finally {
       setLoading(false)
     }
@@ -195,7 +177,7 @@ export default function CheckoutForm({ plan, cats, profile, onSuccess }: Checkou
             </CardHeader>
             <CardContent>
               <div className="space-y-4">
-                {catsWithNutrition.map((cat, index) => (
+                {catsWithNutrition.map((cat) => (
                   <div key={cat.id} className="border rounded-lg p-4">
                     <h4 className="font-medium text-lg mb-2">{cat.name}</h4>
                     <div className="grid grid-cols-2 gap-2 text-sm">

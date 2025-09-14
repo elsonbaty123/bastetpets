@@ -1,12 +1,13 @@
 import { createClient } from '@/lib/supabase/server'
 import { redirect } from 'next/navigation'
-import { CheckoutForm } from '@/components/checkout/CheckoutForm'
+import CheckoutForm from '@/components/checkout/CheckoutForm'
 
 export default async function CheckoutPage({
   searchParams,
 }: {
-  searchParams: { plan?: string }
+  searchParams: Promise<{ plan?: string }>
 }) {
+  const resolvedSearchParams = await searchParams
   const supabase = await createClient()
   
   const {
@@ -17,15 +18,15 @@ export default async function CheckoutPage({
     redirect('/auth/sign-in')
   }
 
-  if (!searchParams.plan) {
+  if (!resolvedSearchParams.plan) {
     redirect('/plans')
   }
 
   // Get selected plan
-  const { data: plan }: { data: any } = await supabase
+  const { data: plan } = await supabase
     .from('plans')
     .select('*')
-    .eq('id', searchParams.plan)
+    .eq('id', resolvedSearchParams.plan)
     .eq('is_active', true)
     .single()
 
@@ -34,14 +35,14 @@ export default async function CheckoutPage({
   }
 
   // Get user profile
-  const { data: profile }: { data: any } = await supabase
+  const { data: profile } = await supabase
     .from('profiles')
     .select('*')
     .eq('id', user.id)
     .single()
 
   // Get user's cats
-  const { data: cats }: { data: any[] | null } = await supabase
+  const { data: cats } = await supabase
     .from('cats')
     .select('*')
     .eq('user_id', user.id)
@@ -65,7 +66,6 @@ export default async function CheckoutPage({
         plan={plan}
         profile={profile}
         cats={cats}
-        user={user}
       />
     </div>
   )

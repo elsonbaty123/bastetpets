@@ -3,7 +3,7 @@ import { redirect } from 'next/navigation'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import Link from 'next/link'
-import { Plus, Cat, Edit, Trash2 } from 'lucide-react'
+import { Plus, Cat, Edit } from 'lucide-react'
 
 export default async function CatsPage() {
   const supabase = await createClient()
@@ -17,7 +17,7 @@ export default async function CatsPage() {
   }
 
   // Get user's cats
-  const { data: cats }: { data: any[] | null } = await supabase
+  const { data: cats } = await supabase
     .from('cats')
     .select('*')
     .eq('user_id', user.id)

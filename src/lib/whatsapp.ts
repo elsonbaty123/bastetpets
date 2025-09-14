@@ -2,7 +2,7 @@
  * WhatsApp integration utilities
  */
 
-import { formatPhoneE164, generateWhatsAppLink } from '@/lib/utils'
+import { generateWhatsAppLink } from '@/lib/utils'
 
 export interface WhatsAppMessage {
   phoneNumber: string
@@ -72,7 +72,7 @@ export async function sendWhatsAppCloudAPI(
   phoneNumberId: string
 ): Promise<{ success: boolean; messageId?: string; error?: string }> {
   try {
-    const cleanPhone = phoneNumber.replace(/\\D/g, '')
+    const cleanPhone = phoneNumber.replace(/\D/g, '')
     // Ensure E.164 format
     const formattedPhone = cleanPhone.startsWith('20') ? cleanPhone : `20${cleanPhone.replace(/^0/, '')}`
     
@@ -105,7 +105,7 @@ export async function sendWhatsAppCloudAPI(
       success: true,
       messageId: data.messages[0]?.id
     }
-  } catch (error) {
+  } catch (error: unknown) {
     return {
       success: false,
       error: error instanceof Error ? error.message : 'Unknown error'
@@ -134,7 +134,7 @@ export async function sendAdminOrderNotification(
     accessToken: string
     phoneNumberId: string
   }
-): Promise<{ success: boolean; method: 'api' | 'link'; result: any }> {
+): Promise<{ success: boolean; method: 'api' | 'link'; result: { success: boolean; messageId?: string; error?: string; link?: string } }> {
   const message = generateAdminOrderMessage(orderSummary)
   
   // Try Cloud API first if enabled
@@ -159,7 +159,7 @@ export async function sendAdminOrderNotification(
   return {
     success: true,
     method: 'link',
-    result: { link }
+    result: { success: true, link }
   }
 }
 
@@ -182,7 +182,7 @@ export function createNotificationPayload(
   type: 'whatsapp' | 'email',
   recipient: string,
   message: string,
-  result: any,
+  result: { success: boolean; messageId?: string; error?: string; link?: string },
   method: 'api' | 'link'
 ): NotificationPayload {
   const payload: NotificationPayload = {

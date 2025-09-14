@@ -17,20 +17,20 @@ export default async function DashboardPage() {
   }
 
   // Get user profile
-  const { data: profile }: { data: any } = await supabase
+  const { data: profile } = await supabase
     .from('profiles')
     .select('*')
     .eq('id', user.id)
     .single()
 
   // Get user's cats
-  const { data: cats }: { data: any[] | null } = await supabase
+  const { data: cats } = await supabase
     .from('cats')
     .select('*')
     .eq('user_id', user.id)
 
   // Get user's recent orders
-  const { data: orders }: { data: any[] | null } = await supabase
+  const { data: orders } = await supabase
     .from('orders')
     .select(`
       *,
@@ -180,7 +180,7 @@ export default async function DashboardPage() {
                     <div key={order.id} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
                       <div>
                         <p className="font-medium">
-                          {(order.plans as any)?.name}
+                          {(order.plans as { name: string })?.name}
                         </p>
                         <p className="text-sm text-gray-600">
                           {order.total_price} {order.currency} • {order.status === 'pending' ? 'في الانتظار' : 

@@ -8,8 +8,9 @@ import { CheckCircle, MessageCircle, Package, Home } from 'lucide-react'
 export default async function OrderSuccessPage({
   params,
 }: {
-  params: { id: string }
+  params: Promise<{ id: string }>
 }) {
+  const resolvedParams = await params
   const supabase = await createClient()
   
   const {
@@ -21,13 +22,13 @@ export default async function OrderSuccessPage({
   }
 
   // Get order details
-  const { data: order }: { data: any } = await supabase
+  const { data: order } = await supabase
     .from('orders')
     .select(`
       *,
       plans:plan_id (name, price, currency)
     `)
-    .eq('id', params.id)
+    .eq('id', resolvedParams.id)
     .eq('user_id', user.id)
     .single()
 
@@ -69,7 +70,7 @@ export default async function OrderSuccessPage({
               <div>
                 <span className="text-gray-600">الخطة:</span>
                 <p className="font-medium">
-                  {(order.plans as any)?.name === 'Weekly' ? 'أسبوعية' : 'شهرية'}
+                  {(order.plans as { name: string })?.name === 'Weekly' ? 'أسبوعية' : 'شهرية'}
                 </p>
               </div>
               <div>

@@ -6,7 +6,6 @@ import { createClient } from '@/lib/supabase/client'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
-import { Textarea } from '@/components/ui/textarea'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { Checkbox } from '@/components/ui/checkbox'
@@ -53,27 +52,15 @@ const initialFormData: CatFormData = {
   notes: ''
 }
 
-const commonAllergies = [
-  'دجاج', 'لحم بقري', 'سمك', 'منتجات ألبان', 'قمح', 'ذرة', 'فول الصويا', 'بيض'
-]
-
-const commonHealthIssues = [
-  'مرض السكري', 'أمراض الكلى', 'أمراض الكبد', 'حساسية جلدية', 'مشاكل هضمية', 
-  'زيادة الوزن', 'نقص الوزن', 'مشاكل الأسنان', 'مشاكل المفاصل'
-]
-
 const commonBreeds = [
   'شيرازي', 'سيامي', 'مين كون', 'بريتيش شورت هير', 'روسي أزرق', 'مصري ماو', 
   'فارسي', 'راجدول', 'أبيسينيان', 'بنغالي', 'مختلط', 'غير محدد'
 ]
 
-export function CatForm({ catId }: { catId?: string }) {
+export function CatForm() {
   const [formData, setFormData] = useState<CatFormData>(initialFormData)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
-  const [allergiesInput, setAllergiesInput] = useState('')
-  const [healthIssuesInput, setHealthIssuesInput] = useState('')
-  const [dislikedInput, setDislikedInput] = useState('')
   const router = useRouter()
   const supabase = createClient()
 
@@ -114,7 +101,7 @@ export function CatForm({ catId }: { catId?: string }) {
         notes: formData.notes || null,
       }
 
-      const { error: saveError } = await (supabase as any)
+      const { error: saveError } = await supabase
         .from('cats')
         .insert([catData])
 
@@ -131,54 +118,6 @@ export function CatForm({ catId }: { catId?: string }) {
       setError('حدث خطأ غير متوقع')
     } finally {
       setLoading(false)
-    }
-  }
-
-  const handleAllergyToggle = (allergy: string) => {
-    setFormData(prev => ({
-      ...prev,
-      allergies: prev.allergies.includes(allergy)
-        ? prev.allergies.filter(a => a !== allergy)
-        : [...prev.allergies, allergy]
-    }))
-  }
-
-  const handleHealthIssueToggle = (issue: string) => {
-    setFormData(prev => ({
-      ...prev,
-      health_issues: prev.health_issues.includes(issue)
-        ? prev.health_issues.filter(h => h !== issue)
-        : [...prev.health_issues, issue]
-    }))
-  }
-
-  const addCustomAllergy = () => {
-    if (allergiesInput.trim() && !formData.allergies.includes(allergiesInput.trim())) {
-      setFormData(prev => ({
-        ...prev,
-        allergies: [...prev.allergies, allergiesInput.trim()]
-      }))
-      setAllergiesInput('')
-    }
-  }
-
-  const addCustomHealthIssue = () => {
-    if (healthIssuesInput.trim() && !formData.health_issues.includes(healthIssuesInput.trim())) {
-      setFormData(prev => ({
-        ...prev,
-        health_issues: [...prev.health_issues, healthIssuesInput.trim()]
-      }))
-      setHealthIssuesInput('')
-    }
-  }
-
-  const addCustomDisliked = () => {
-    if (dislikedInput.trim() && !formData.disliked_ingredients.includes(dislikedInput.trim())) {
-      setFormData(prev => ({
-        ...prev,
-        disliked_ingredients: [...prev.disliked_ingredients, dislikedInput.trim()]
-      }))
-      setDislikedInput('')
     }
   }
 

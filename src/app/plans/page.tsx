@@ -17,19 +17,21 @@ export default async function PlansPage() {
   }
 
   // Get available plans
-  const { data: plans }: { data: any[] | null } = await supabase
+  const { data: plans } = await supabase
     .from('plans')
     .select('*')
     .eq('is_active', true)
     .order('price', { ascending: true })
 
   // Get user's cats
-  const { data: cats }: { data: any[] | null } = await supabase
+  const { data: cats } = await supabase
     .from('cats')
     .select('*')
     .eq('user_id', user.id)
 
-  const brandName = process.env.NEXT_PUBLIC_BRAND_NAME || 'بستت'
+  if (!cats || cats.length === 0) {
+    redirect('/cats/new')
+  }
 
   return (
     <div className="min-h-screen bg-gray-50">

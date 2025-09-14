@@ -1,11 +1,10 @@
-import Link from "next/link";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Heart, Shield, Clock, Phone } from "lucide-react";
+import { Button } from "@/components/ui/button"
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+import { Heart, Shield, Clock, Phone } from "lucide-react"
+import Link from "next/link"
 
 export default function HomePage() {
-  const brandName = process.env.NEXT_PUBLIC_BRAND_NAME || 'بستت';
-  const currency = process.env.NEXT_PUBLIC_CURRENCY || 'جنيه';
+  const brandName = process.env.NEXT_PUBLIC_BRAND_NAME || 'بستت'
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100">
@@ -200,10 +199,10 @@ export default function HomePage() {
           </div>
           
           <div className="border-t border-gray-800 mt-8 pt-8 text-center text-gray-400">
-            <p>جميع الحقوق محفوظة © 2024 {brandName}</p>
+            <p>&copy; 2024 {brandName}. جميع الحقوق محفوظة.</p>
           </div>
         </div>
       </footer>
     </div>
-  );
+  )
 }
